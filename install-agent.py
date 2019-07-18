@@ -32,7 +32,7 @@ CONFIGURATOR_DIR = "/opt/configurator-exporter"
 # collectd_plugins_source_url = "http://10.81.1.134:8000/plugins.tar.gz"
 COLLECTD_PLUGINS_REPO = "https://github.com/maplelabs/collectd-plugins"
 COLLECTD_PLUGINS_ZIP = "https://github.com/maplelabs/collectd-plugins/archive/master.zip"
-CONFIGURATOR_ZIP = "https://github.com/maplelabs/configurator-exporter/archive/master.zip"
+CONFIGURATOR_ZIP = "https://github.com/maplelabs/configurator-exporter-apm/archive/master.zip"
 COLLECTD_PLUGINS_DIR = "/opt/collectd/plugins"
 
 COLLECTD_X86_64 = "https://github.com/maplelabs/collectd/releases/download/collectd-custom-5.6.1/collectd_x86_64.tar.bz2"
@@ -619,7 +619,7 @@ class DeployAgent:
         download_file(CONFIGURATOR_ZIP, local_path="/tmp/configurator.zip", proxy=self.proxy)
         unzip_file("/tmp/configurator.zip")
         try:
-            shutil.copytree("/tmp/configurator-exporter-master", "/opt/configurator-exporter")
+            shutil.copytree("/tmp/configurator-exporter-apm-master", "/opt/configurator-exporter")
         except shutil.Error as err:
             print >> sys.stderr, err
         print "setup configurator..."
