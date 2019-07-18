@@ -27,7 +27,7 @@ COLLCTD_SOURCE_URL = "https://github.com/maplelabs/collectd/releases/download/" 
 COLLCTD_SOURCE_FILE = "collectd-custom-5.6.1"
 
 # configurator_source_url = "http://10.81.1.134:8000/configurator.tar.gz"
-CONFIGURATOR_SOURCE_REPO = "https://github.com/maplelabs/configurator-exporter"
+CONFIGURATOR_SOURCE_REPO = "https://github.com/maplelabs/configurator-exporter-apm"
 CONFIGURATOR_DIR = "/opt/configurator-exporter"
 # collectd_plugins_source_url = "http://10.81.1.134:8000/plugins.tar.gz"
 COLLECTD_PLUGINS_REPO = "https://github.com/maplelabs/collectd-plugins"
