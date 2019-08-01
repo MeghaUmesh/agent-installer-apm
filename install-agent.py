@@ -17,6 +17,8 @@ import subprocess
 import sys
 import tarfile
 import zipfile
+import json
+import yaml
 from time import sleep
 from subprocess import check_output
 
@@ -34,7 +36,7 @@ COLLECTD_PLUGINS_REPO = "https://github.com/maplelabs/collectd-plugins"
 COLLECTD_PLUGINS_ZIP = "https://github.com/maplelabs/collectd-plugins/archive/master.zip"
 CONFIGURATOR_ZIP = "https://github.com/maplelabs/configurator-exporter-apm/archive/master.zip"
 COLLECTD_PLUGINS_DIR = "/opt/collectd/plugins"
-
+COLLECTD_PLUGIN_MAPPING_FILE = "/opt/configurator-exporter/config_handler/mapping/metrics_plugins_mapping.yaml"
 COLLECTD_X86_64 = "https://github.com/maplelabs/collectd/releases/download/collectd-custom-5.6.1/collectd_x86_64.tar.bz2"
 
 DEFAULT_RETRIES = 3
@@ -184,6 +186,26 @@ def check_open_port_available(port, address="127.0.0.1"):
     except socket.error, e:
         print "Port {0} is available".format(port)
         return True
+
+
+def modify_plugin_input(plugin_input):
+    with open(COLLECTD_PLUGIN_MAPPING_FILE, "r") as inp:
+        plugin_input_file = inp.read()
+    metrics_mapping = yaml.load(plugin_input_file)
+    try:
+        for service in plugin_input.keys():
+            for item in plugin_input[service].keys():
+                if item == "interval":
+                    metrics_mapping[service][0][item] = int(plugin_input[service]["interval"])
+                for service_item in metrics_mapping[service][0]["config"]:
+                    if (service_item["fieldName"] == item):
+                        service_item["defaultValue"] = plugin_input[service][item]
+    except Exception as err:
+        print "Exception in modify_plugin_input due to {0}".format(str(err))
+        return
+    mapping_yaml_out = yaml.dump(yaml.load(json.dumps(metrics_mapping)), default_flow_style=False)
+    with open(COLLECTD_PLUGIN_MAPPING_FILE, "w") as out:
+        out.write(mapping_yaml_out)
 
 
 class DeployAgent:
@@ -753,7 +775,7 @@ class DeployAgent:
 
 def install(collectd=True, setup=True, fluentd=True, configurator=True, configurator_host="0.0.0.0",
             configurator_port=DEFAULT_CONFIGURATOR_PORT,
-            http_proxy=None, https_proxy=None, retries=None):
+            http_proxy=None, https_proxy=None, retries=None, plugin_input=None):
     """
     use this function to controll installation process
     :param collectd:
@@ -834,7 +856,8 @@ def install(collectd=True, setup=True, fluentd=True, configurator=True, configur
     if configurator:
         obj.start_configurator_service()
 
-   
+    modify_plugin_input(plugin_input)
+
     print "=================total time in seconds============"
     print time.time() - begin
     print "===================================="
@@ -875,6 +898,8 @@ if __name__ == '__main__':
                         help='https proxy for connecting to internet')
     parser.add_argument('--retries', type=int, dest='retries',
                         help='Retries on failure')
+    parser.add_argument('-pi', '--plugin_input', action='store', default={}, dest='plugin_input', type=json.loads,
+                        help='customised plugin input  details')
     args = parser.parse_args()
 
     install(collectd=args.installcollectd,
@@ -885,4 +910,5 @@ if __name__ == '__main__':
             configurator_port=args.port,
             http_proxy=args.http_proxy,
             https_proxy=args.https_proxy,
-            retries=args.retries)
+            retries=args.retries,
+	        plugin_input= args.plugin_input)
