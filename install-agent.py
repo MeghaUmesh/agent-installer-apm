@@ -18,7 +18,7 @@ import sys
 import tarfile
 import zipfile
 import json
-import yaml
+#import yaml
 from time import sleep
 from subprocess import check_output
 
@@ -189,6 +189,7 @@ def check_open_port_available(port, address="127.0.0.1"):
 
 
 def modify_plugin_input(plugin_input):
+    import yaml
     with open(COLLECTD_PLUGIN_MAPPING_FILE, "r") as inp:
         plugin_input_file = inp.read()
     metrics_mapping = yaml.load(plugin_input_file)
