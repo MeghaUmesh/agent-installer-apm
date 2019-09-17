@@ -218,6 +218,7 @@ class DeployAgent:
         if self.retries is None:
             self.retries = DEFAULT_RETRIES
         self.os = get_os()
+        self.version = get_os_version()
         #self.pip = 'pip'
         self.python = 'python'
         self.pip = self.python + " -m pip"
@@ -283,8 +284,13 @@ class DeployAgent:
             cmd2 = "DEBIAN_FRONTEND='noninteractive' apt-get -y -o Dpkg::Options::='--force-confdef' " \
                    "-o Dpkg::Options::='--force-confold' install gcc make curl python-dev sudo wget " \
                    "libmysqlclient-dev libcurl4-openssl-dev sysstat krb5-user libkrb5-dev"
+            cmd3 = ""
+            if self.version == "18.04":
+                cmd3 = "DEBIAN_FRONTEND='noninteractive' apt-get -y install libcurl3 "
             self._run_cmd(cmd1, shell=True)
             self._run_cmd(cmd2, shell=True)
+            if cmd3:
+                self._run_cmd(cmd3, shell=True)
 
         elif self.os == "centos" or self.os == "redhat":
             print "found centos/redhat installing developments tools and dependencies..."
@@ -876,7 +882,13 @@ def get_os():
     else:
         return os
 
-
+def get_os_version():
+    """
+    return os version
+    :return:
+    """
+    version = platform.dist()[1]
+    return version
 
 if __name__ == '__main__':
     """main function"""
