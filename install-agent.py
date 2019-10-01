@@ -37,6 +37,7 @@ COLLECTD_PLUGINS_ZIP = "https://github.com/maplelabs/collectd-plugins/archive/ma
 CONFIGURATOR_ZIP = "https://github.com/maplelabs/configurator-exporter-apm/archive/master.zip"
 COLLECTD_PLUGINS_DIR = "/opt/collectd/plugins"
 COLLECTD_PLUGIN_MAPPING_FILE = "/opt/configurator-exporter/config_handler/mapping/metrics_plugins_mapping.yaml"
+FLUENTD_PLUGIN_MAPPING_FILE = "/opt/configurator-exporter/config_handler/mapping/logging_plugins_mapping.yaml"
 COLLECTD_X86_64 = "https://github.com/maplelabs/collectd/releases/download/collectd-custom-5.6.1/collectd_x86_64.tar.bz2"
 
 DEFAULT_RETRIES = 3
@@ -195,17 +196,43 @@ def modify_plugin_input(plugin_input):
     metrics_mapping = yaml.load(plugin_input_file)
     try:
         for service in plugin_input.keys():
-            for item in plugin_input[service].keys():
-                if item == "interval":
-                    metrics_mapping[service][0][item] = int(plugin_input[service]["interval"])
-                for service_item in metrics_mapping[service][0]["config"]:
-                    if (service_item["fieldName"] == item):
-                        service_item["defaultValue"] = plugin_input[service][item]
+            if "agentConfig" in plugin_input[service] and plugin_input[service]["agentConfig"]:
+                agent_plugin = plugin_input[service]['agentConfig']
+                for item in agent_plugin.keys():
+                    if item == "interval":
+                        metrics_mapping[service][0][item] = int(agent_plugin["interval"])
+                    for service_item in metrics_mapping[service][0]["config"]:
+                        if service_item["fieldName"] == item:
+                            service_item["defaultValue"] = agent_plugin[item]
     except Exception as err:
         print "Exception in modify_plugin_input due to {0}".format(str(err))
         return
     mapping_yaml_out = yaml.dump(yaml.load(json.dumps(metrics_mapping)), default_flow_style=False)
     with open(COLLECTD_PLUGIN_MAPPING_FILE, "w") as out:
+        out.write(mapping_yaml_out)
+
+
+def modify_logger_input(plugin_input):
+    import yaml
+    with open(FLUENTD_PLUGIN_MAPPING_FILE, "r") as inp:
+        plugin_input_file = inp.read()
+    metrics_mapping = yaml.load(plugin_input_file)
+    #print(metrics_mapping)
+    try:
+        for service in plugin_input.keys():
+            if "loggerConfig" in plugin_input[service] and plugin_input[service]["loggerConfig"]:
+                for logger_plugin in plugin_input[service]["loggerConfig"]:
+                    if logger_plugin["name"] in metrics_mapping:
+                        plugin_name = logger_plugin["name"]
+                        for item in metrics_mapping[plugin_name]['source']:
+                            for input_item in logger_plugin:
+                                if item == input_item:
+                                    metrics_mapping[plugin_name]['source'][item] = logger_plugin[item]
+    except Exception as err:
+        print "Exception in modify_logger_input due to {0}".format(str(err))
+        return
+    mapping_yaml_out = yaml.dump(yaml.load(json.dumps(metrics_mapping)), default_flow_style=False)
+    with open(FLUENTD_PLUGIN_MAPPING_FILE, "w") as out:
         out.write(mapping_yaml_out)
 
 
@@ -864,7 +891,7 @@ def install(collectd=True, setup=True, fluentd=True, configurator=True, configur
         obj.start_configurator_service()
 
     modify_plugin_input(plugin_input)
-
+    modify_logger_input(plugin_input)
     print "=================total time in seconds============"
     print time.time() - begin
     print "===================================="
