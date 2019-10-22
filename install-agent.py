@@ -23,10 +23,10 @@ from time import sleep
 
 
 COLLCTD_SOURCE_URL = "https://github.com/maplelabs/collectd/releases/download/" \
-                     "collectd-custom-5.6.1/collectd-custom-5.6.1.tar.bz2"
+                     "collectd-custom-5.6.2/collectd-custom-5.6.2.tar.bz2"
 # collectd_source_url = "https://github.com/upendrasahu/collectd/releases/download/" \
 #                       "collectd-custom-5.6.1/collectd-custom-5.6.1.tar.bz2"
-COLLCTD_SOURCE_FILE = "collectd-custom-5.6.1"
+COLLCTD_SOURCE_FILE = "collectd-custom-5.6.2"
 
 # configurator_source_url = "http://10.81.1.134:8000/configurator.tar.gz"
 CONFIGURATOR_SOURCE_REPO = "https://github.com/maplelabs/configurator-exporter-apm"
@@ -38,7 +38,8 @@ CONFIGURATOR_ZIP = "https://github.com/maplelabs/configurator-exporter-apm/archi
 COLLECTD_PLUGINS_DIR = "/opt/collectd/plugins"
 COLLECTD_PLUGIN_MAPPING_FILE = "/opt/configurator-exporter/config_handler/mapping/metrics_plugins_mapping.yaml"
 FLUENTD_PLUGIN_MAPPING_FILE = "/opt/configurator-exporter/config_handler/mapping/logging_plugins_mapping.yaml"
-COLLECTD_X86_64 = "https://github.com/maplelabs/collectd/releases/download/collectd-custom-5.6.1/collectd_x86_64.tar.bz2"
+#COLLECTD_X86_64 = "https://github.com/maplelabs/collectd/releases/download/collectd-custom-5.6.1/collectd_x86_64.tar.bz2"
+COLLECTD_X86_64 = "https://github.com/maplelabs/collectd/releases/download/collectd-custom-5.6.2/collectd_x86_64.tar.bz2"
 
 DEFAULT_RETRIES = 3
 
