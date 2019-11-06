@@ -546,7 +546,9 @@ class DeployAgent:
                 self._add_proxy_for_curl_in_file(self.proxy, fluentd_file_name)
             self._run_cmd("sh {0}".format(fluentd_file_name), shell=True)
             self._run_cmd("echo '*.* @127.0.0.1:42186' >> /etc/rsyslog.conf", shell=True, ignore_err=True)
-
+            self._run_cmd("sudo apt install -y build-essential", shell=True)
+            self._run_cmd("sudo apt install -y automake autoconf libtool", shell=True)
+            self._run_cmd("sudo apt install -y libgeoip-dev", shell=True)
 
         elif self.os in ["centos", "redhat"]:
             print "install fluentd for centos/redhat {0} {1}".format(version, name)
@@ -559,6 +561,9 @@ class DeployAgent:
                 self._add_proxy_for_curl_in_file(self.proxy, fluentd_file_name)
                 self._add_proxy_for_rpm_in_file(self.proxy, fluentd_file_name)
             self._run_cmd("sh {0}".format(fluentd_file_name), shell=True)
+            self._run_cmd('sudo yum group install -y "Development Tools"', shell=True)
+            self._run_cmd("sudo yum install -y geoip-devel", shell=True)
+
         """
         self._run_cmd("yes | cp ./td-agent.conf /opt/td-agent/etc/td-agent/", shell=True)
         self._run_cmd("yes | cp ./td-agent.conf /etc/td-agent/", shell=True)
@@ -573,6 +578,8 @@ class DeployAgent:
         self._run_cmd("/usr/sbin/td-agent-gem install fluent-plugin-elasticsearch", shell=True)
         print "Install fluentd fluent-plugin-multi-format-parser..."
         self._run_cmd("/usr/sbin/td-agent-gem install fluent-plugin-multi-format-parser", shell=True)
+        print "Install fluentd fluentd-plugin-geoip..."
+        self._run_cmd("/usr/sbin/td-agent-gem install fluent-plugin-geoip", shell=True)
         # print "Install fluentd fluent-plugin-mysqlslowquery..."
         # self._run_cmd("/usr/sbin/td-agent-gem install fluent-plugin-mysqlslowquery", shell=True)
         # print "Install fluentd fluent-plugin-kafka..."
