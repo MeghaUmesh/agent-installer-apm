@@ -561,7 +561,7 @@ class DeployAgent:
                 self._add_proxy_for_curl_in_file(self.proxy, fluentd_file_name)
                 self._add_proxy_for_rpm_in_file(self.proxy, fluentd_file_name)
             self._run_cmd("sh {0}".format(fluentd_file_name), shell=True)
-            self._run_cmd('sudo yum group install -y "Development Tools"', shell=True)
+            self._run_cmd('sudo yum groupinstall -y "Development Tools"', shell=True)
             self._run_cmd("sudo yum install -y geoip-devel", shell=True)
 
         """
