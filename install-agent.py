@@ -562,7 +562,9 @@ class DeployAgent:
                 self._add_proxy_for_rpm_in_file(self.proxy, fluentd_file_name)
             self._run_cmd("sh {0}".format(fluentd_file_name), shell=True)
             self._run_cmd('sudo yum groupinstall -y "Development Tools"', shell=True)
-            self._run_cmd("sudo yum install -y geoip-devel", shell=True)
+            # self._run_cmd("sudo yum install -y geoip-devel", shell=True)
+            self._run_cmd("sudo yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm", shell=True, ignore_err=True)
+            self._run_cmd("sudo yum install -y https://rpmfind.net/linux/centos/7.7.1908/os/x86_64/Packages/GeoIP-devel-1.5.0-14.el7.x86_64.rpm", shell=True, ignore_err=True)
 
         """
         self._run_cmd("yes | cp ./td-agent.conf /opt/td-agent/etc/td-agent/", shell=True)
