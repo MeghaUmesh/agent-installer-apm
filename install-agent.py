@@ -695,6 +695,16 @@ class DeployAgent:
             shutil.copytree("/tmp/configurator-exporter-apm-master", "/opt/configurator-exporter")
         except shutil.Error as err:
             print >> sys.stderr, err
+
+        print "Downloading GeoIP database..."
+        try:
+            self._run_cmd("rm -rf /usr/share/GeoLite2-City*", shell=True)
+            self._run_cmd("mv /opt/configurator-exporter/GeoLite2-City /usr/share/GeoLite2-City", ignore_err=True,
+                          shell=True)
+
+        except Exception as err:
+            print "Failed to download GeoIP database : {0}".format(str(err))
+
         print "setup configurator..."
         if os.path.isfile("{0}/requirements.txt".format(CONFIGURATOR_DIR)):
             if self.proxy:
