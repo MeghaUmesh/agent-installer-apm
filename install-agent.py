@@ -575,13 +575,6 @@ class DeployAgent:
         cmd = "usermod -a -G adm td-agent"
         print "Adding user td-agent to the group adm"
         self._run_cmd(cmd, ignore_err=True, shell=True)
-        print "Download GeoLite2-City database for geoip..."
-        self._run_cmd("rm -rf /usr/share/GeoLite2-City*", shell=True)
-        self._run_cmd("wget -P /usr/share/ https://geolite.maxmind.com/download/geoip/database/GeoLite2-City.tar.gz", shell=True)
-        self._run_cmd("tar -xvf /usr/share/GeoLite2-City*.gz -C /usr/share/", shell=True)
-        self._run_cmd("rm -r /usr/share/GeoLite2-City*.gz", shell=True)
-        self._run_cmd("mv /usr/share/GeoLite2-City* /usr/share/GeoLite2-City", shell=True)
-
         print "Install fluentd gems..."
         print "Install fluentd fluent-plugin-elasticsearch..."
         self._run_cmd("/usr/sbin/td-agent-gem install fluent-plugin-elasticsearch", shell=True)
