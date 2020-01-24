@@ -310,7 +310,7 @@ class DeployAgent:
             #        "zlib1g-dev python-dev python-pip libcurl4-openssl-dev libvirt-dev sudo libmysqlclient-dev git wget"
             # cmd2 = "apt-get install -y gcc make curl python-dev sudo wget libmysqlclient-dev libcurl4-openssl-dev"
             cmd2 = "DEBIAN_FRONTEND='noninteractive' apt-get -y -o Dpkg::Options::='--force-confdef' " \
-                   "-o Dpkg::Options::='--force-confold' install gcc make curl python-dev sudo wget " \
+                   "-o Dpkg::Options::='--force-confold' install gcc make curl libssl-dev libffi-dev python-dev sudo wget " \
                    "libmysqlclient-dev libcurl4-openssl-dev sysstat krb5-user libkrb5-dev"
             cmd3 = ""
             if self.version == "18.04":
